@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-Texture::Texture(const char* image, GLenum textureType, GLenum textureSlot, GLenum format, GLenum pixelType)
+Texture::Texture(const char* image, GLenum textureType, GLenum textureSlot, GLenum pixelType)
 {
 	type = textureType;
 	slot = textureSlot;
@@ -20,6 +20,21 @@ Texture::Texture(const char* image, GLenum textureType, GLenum textureSlot, GLen
 	
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(image, &width, &height, &nrChannels, 0);
+
+	switch (nrChannels)
+	{
+		case 1: 
+			format = GL_RED;
+			break;
+		default:
+		case 3: 
+			format = GL_RGB;
+			break;
+		case 4: 
+			format = GL_RGBA;
+			break;
+	};
+
 	if (data)
 	{
 		glTexImage2D(textureType, 0, format, width, height, 0, format, pixelType, data);

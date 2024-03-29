@@ -11,8 +11,9 @@ class Texture
 		GLuint ID;
 		GLenum type;
 		GLenum slot;
+		GLenum format;
 
-		Texture(const char* image, GLenum textureType, GLenum slot, GLenum format, GLenum pixelType);
+		Texture(const char* image, GLenum textureType, GLenum slot, GLenum pixelType);
 
 		void TextureUnit(Shader& shader, const char* uniform, GLuint unit);
 		void Activate();

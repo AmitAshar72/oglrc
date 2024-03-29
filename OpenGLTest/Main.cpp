@@ -26,14 +26,6 @@ void ProcessInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_LENGTH= 600;
 
-//float vertices[] = {
-//	// positions          // colors           // texture coords
-//	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-//	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-//	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-//	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-//};
-
 float vertices[] = {
 	// positions			 // colors         // texture   //Normals
 											   // coords
@@ -186,6 +178,8 @@ unsigned int lightIndices[] =
 };
 
 
+
+
 int main()
 {
 	//Instantiate GLFW Window
@@ -263,11 +257,21 @@ int main()
 #pragma region Textures
 
 	//Create Textures
-	Texture containerTex("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	/*Texture containerTex("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 	containerTex.TextureUnit(ourShader, "texture1", 0);
+	containerTex.TextureUnit(ourShader, "material.diffuse", 0);
 	
-	Texture faceTex("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/face.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture faceTex("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/face.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 	faceTex.TextureUnit(ourShader, "texture2", 1);
+	faceTex.TextureUnit(ourShader, "material.diffuse", 0);*/
+	
+	Texture container2Tex("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container2.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+	//container2Tex.TextureUnit(ourShader, "texture1", 0);
+	container2Tex.TextureUnit(ourShader, "material.diffuse", 0);
+
+	Texture container2Tex_specular("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container2_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+	//container2Tex_specular.TextureUnit(ourShader, "texture2", 1);
+	container2Tex_specular.TextureUnit(ourShader, "material.specular", 0); 
 
 #pragma endregion Textures
 	
@@ -290,27 +294,21 @@ int main()
 
 		//Activate Shader
 		ourShader.Activate();		
-		ourShader.setVec3("light.Position", lightPos);
+		ourShader.setVec3("lightPos", lightPos);
 		ourShader.setVec3("viewPos", camera.Position);
 
-		lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
-		lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
-		lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
-		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
-		ourShader.setVec3("light.ambient", ambientColor);
-		ourShader.setVec3("light.diffuse", diffuseColor);
-		ourShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-
-		// material properties
-		ourShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-		ourShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-		ourShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
+		ourShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		ourShader.setFloat("material.shininess", 32.0f);
 
+		ourShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		ourShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+		ourShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
 		//Activate Textures
-		containerTex.Activate();
-		faceTex.Activate();
+		//containerTex.Activate();
+		//faceTex.Activate();
+		container2Tex.Activate();
+		container2Tex_specular.Activate();
 
 		//Update blend percentage between two textures
 		ourShader.setFloat("blend", blend);
@@ -325,7 +323,7 @@ int main()
 
 		m_VAO.Bind();
 
-		for (unsigned int i = 0; i < 1; i++)
+		for (unsigned int i = 0; i < 3; i++)
 		{
 			// calculate the model matrix for each object and pass it to shader before drawing
 			glm::mat4 model = glm::mat4(1.0f);
@@ -378,8 +376,10 @@ int main()
 	m_lightEBO.Delete();
 	lightShader.Delete();
 
-	containerTex.Delete();
-	faceTex.Delete();
+	//containerTex.Delete();
+	//faceTex.Delete();
+	container2Tex.Delete();
+	container2Tex_specular.Delete();
 
 	//Terminate call to clean up all resources
 	glfwTerminate();
