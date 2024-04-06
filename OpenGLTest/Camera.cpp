@@ -48,6 +48,7 @@ void Camera::ProcessMouseScroll(float yoffset)
 		Zoom = 45.0f;
 }
 
+//For the current camera setup, we dont change Roll values. We only focus on Pitch(x axis) and Yaw (Y axis)
 void Camera::updateCameraVectors()
 {
 	// calculate the new Front vector
