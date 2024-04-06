@@ -55,9 +55,9 @@ struct SpotLight
 #define NR_POINT_LIGHTS 4  
 
 in vec3 FragPos;
+in vec3 Normal;
 in vec3 ourColor;
 in vec2 TexCoord;
-in vec3 Normal;
 
 out vec4 FragColor;
 
