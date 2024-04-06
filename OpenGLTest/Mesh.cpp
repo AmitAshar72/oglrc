@@ -51,6 +51,8 @@ void Mesh::Draw(Shader& shader)
 		{
 			num = std::to_string(numSpecular++);
 		}
+
+		//New Texture Unit
 		textures[i].TextureUnit(shader, (type + num).c_str(), i);
 		textures[i].Bind();
 	}

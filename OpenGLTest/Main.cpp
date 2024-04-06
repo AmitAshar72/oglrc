@@ -1,19 +1,23 @@
-#include "Mesh.h"
+#include "Model.h"
 #include <GLFW/glfw3.h>
 
 
-void InitWindow();
-int InitGlad();
-void Framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void ProcessInput(GLFWwindow* window);
-void SetupLights(Shader& shader, Camera& camera);
+void InitWindow(); // Initial GLFW
+int InitGlad(); //Initialize Glad. Glad manages function pointers for OpenGL
+void Framebuffer_size_callback(GLFWwindow* window, int width, int height); //Callback function for when we resize the window
+void mouse_callback(GLFWwindow* window, double xpos, double ypos); //callback function for mouse inputs. Mouse X and Y 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset); // Callback function for mouse scroll
+void ProcessInput(GLFWwindow* window); 
+void SetupLights(Shader& shader, Camera& camera); //Light parameters are set here
 
-
+//Screen dimensions
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_LENGTH= 600;
+
+//Textures directory
 static const std::string textureDirectory = "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures";
+
+//Vertices of a cube with pos, normals, color and tex
 Vertex vertices[] = {
 	// positions			  //Normals				// colors         // texture 
 //																		// coords
@@ -49,7 +53,7 @@ Vertex vertices[] = {
 	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)}
 };
 
-
+//indices of the vertices defined above
 GLuint indices[] = 
 {  
 	// Front face
@@ -72,24 +76,7 @@ GLuint indices[] =
 		22, 23, 20
 };
 
-
-glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
-//Texutre alpha blend
-float blend = 0.9f;
-
-//Camera 
+//Camera object with initial pos
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 //Mouse Inputs
@@ -152,38 +139,36 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
+	//Set the current window as context for OpenGL
 	glfwMakeContextCurrent(window);
+	//Allow cursor but keep it disabled
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//On Window Resize, callback to update viewport
 	glfwSetFramebufferSizeCallback(window, Framebuffer_size_callback);
+	//On mouse movement, callback to update camera
 	glfwSetCursorPosCallback(window, mouse_callback);
+	//On scroll input, callback to update camera zoom (FOV)
 	glfwSetScrollCallback(window, scroll_callback);
 
 	//Initialize GLAD
 	InitGlad();
 	
+	//Enable Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 
 	//Initialize our default shaders
 	Shader ourShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/VertexShader.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/FragmentShader.fs");
 
-#pragma region Textures
+	//Model loading
+	Model mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/backpack/backpack.obj");
 
-	Texture textures[]
-	{
-		Texture(textureDirectory, "container2.png", "diffuse", 0, GL_UNSIGNED_BYTE),
-		Texture(textureDirectory, "container2_specular.png", "specular", 1, GL_UNSIGNED_BYTE)
-	};
-
-#pragma endregion Textures
-	//Vertex Buffer Objects are created to store information that has to be rendered, on the GPU
-	
 	// Store mesh data in vectors for the mesh
-	std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	/*std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
-	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
-	Mesh cube(verts, ind, tex);
+	std::vector <Texture> tex;*/
+	//Mesh cube(verts, ind, tex);
 
 #pragma region Light Cube
 	////Initialize Light Shader
@@ -192,11 +177,13 @@ int main()
 	// Store mesh data in vectors for the mesh
 	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
 	std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
+	std::vector <Texture> tex;
 
-	Mesh lightCube(verts, ind, tex);
+	Mesh lightCube(lightVerts, lightInd, tex);
 
 #pragma endregion Light Cube
-		
+	
+	//Set Light Color, the value is fed into LightShader.fs
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	float radius = 5.0f;
@@ -213,12 +200,12 @@ int main()
 		ProcessInput(window);
 
 		//Render Call
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Activate Shader
 		ourShader.Activate();		
-		ourShader.setVec3("viewPos", camera.Position);
+		ourShader.setVec3("viewPos", camera.Position); //Update view position with the current camera position
 		
 		//Setup lights
 		SetupLights(ourShader, camera);
@@ -233,19 +220,21 @@ int main()
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f));
+		//model = glm::scale(model, glm::vec3(0.05f));
 		ourShader.setMat4("model", model);
 
-		cube.Draw(ourShader);
+		//cube.Draw(ourShader);
+		//Draw our model
+		mod.Draw(ourShader);
 
+#pragma region Light Cube draw
 		//Activate light shader
 		lightShader.Activate();
 		
 		lightShader.setMat4("projection", projection);
 		lightShader.setMat4("view", view);
 
-		//m_lightVAO.Bind();
-
-		for (unsigned int i = 0; i < 4; i++)
+		for (unsigned int i = 0; i < 1; i++)
 		{
 			glm::mat4 lightModel = glm::mat4(1.0f);
 
@@ -258,6 +247,7 @@ int main()
 			lightShader.setVec3("lightColor", lightColor);
 			lightCube.Draw(lightShader);
 		}
+#pragma endregion Light Cube draw
 
 		//check and call events and swap buffers
 		glfwSwapBuffers(window);
@@ -332,21 +322,8 @@ void ProcessInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
-	}
+	} 
 	
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		blend += 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
-		if (blend >= 1.0f)
-			blend = 1.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		blend -= 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
-		if (blend <= 0.0f)
-			blend = 0.0f;
-	}
-
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
