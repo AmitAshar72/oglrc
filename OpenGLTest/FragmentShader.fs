@@ -73,7 +73,6 @@ uniform vec3 lightColor;
 uniform vec3 viewPos;
   
 uniform Material material;
-uniform Light light;
 
 uniform DirectionLight dirlight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];

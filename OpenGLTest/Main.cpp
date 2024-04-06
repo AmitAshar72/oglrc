@@ -357,10 +357,6 @@ int main()
 		ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 		ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-		ourShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		ourShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
-		ourShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-
 		//Activate Textures
 		//containerTex.Activate();
 		//faceTex.Activate();
