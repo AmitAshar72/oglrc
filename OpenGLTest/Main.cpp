@@ -13,7 +13,7 @@ void SetupLights(Shader& shader, Camera& camera);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_LENGTH= 600;
-
+static const std::string textureDirectory = "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures";
 Vertex vertices[] = {
 	// positions			  //Normals				// colors         // texture 
 //																		// coords
@@ -172,8 +172,8 @@ int main()
 
 	Texture textures[]
 	{
-		Texture("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container2.png", "diffuse", 0, GL_UNSIGNED_BYTE),
-		Texture("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/container2_specular.png", "specular", 1, GL_UNSIGNED_BYTE)
+		Texture(textureDirectory, "container2.png", "diffuse", 0, GL_UNSIGNED_BYTE),
+		Texture(textureDirectory, "container2_specular.png", "specular", 1, GL_UNSIGNED_BYTE)
 	};
 
 #pragma endregion Textures

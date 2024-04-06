@@ -1,9 +1,11 @@
 #include "Texture.h"
 
-Texture::Texture(const char* image, const char* textureType, GLuint textureSlot, GLenum pixelType)
+Texture::Texture(const std::string& dir, const char* image , const char* textureType, GLuint textureSlot, GLenum pixelType)
 {
 	type = textureType;
 	slot = textureSlot;
+	texPath = image;
+	std::string filename = dir + '/' + image;
 
 	// load and generate the texture
 	int width, height, nrChannels;
@@ -19,7 +21,7 @@ Texture::Texture(const char* image, const char* textureType, GLuint textureSlot,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(image, &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
 
 	switch (nrChannels)
 	{

@@ -12,8 +12,9 @@ class Texture
 		const char* type;
 		GLuint slot;
 		GLenum format;
+		std::string texPath;
 
-		Texture(const char* image, const char* textureType, GLuint slot, GLenum pixelType);
+		Texture(const std::string& dir, const char* image, const char* textureType, GLuint slot, GLenum pixelType);
 
 		void TextureUnit(Shader& shader, const char* uniform, GLuint unit);
 		void Activate();
