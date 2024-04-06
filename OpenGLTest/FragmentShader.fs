@@ -61,22 +61,19 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-//Two Texture Blend
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform float blend;
-
 //Light
-uniform vec3 lightPos;  
-uniform vec3 objectColor;
-uniform vec3 lightColor;
 uniform vec3 viewPos;
-  
-uniform Material material;
-
 uniform DirectionLight dirlight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
+
+uniform Material material;
+
+//Tex
+uniform sampler2D diffuse0; 
+uniform sampler2D specular0; 
+
+
 
 vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -84,19 +81,6 @@ vec3 CalculateSpotLights(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDi
 
 void main()
 {
-    //vec4 tex1 = texture(texture1, TexCoord);
-    //vec4 tex2 = texture(texture2, TexCoord);
-    //vec4 mat1 = texture(material.diffuse, TexCoord);
-    //vec4 texMix = mix(tex1, tex2, blend);
-    //texMix = mix(texMix, mat1, 0.5);    
-    //vec3 tex = texMix.rgb;
-    //------------------------------------------------------
-
-    //vec4 texMix = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), blend);
-    vec3 tex = vec3(texture(material.diffuse, TexCoord)); //tex ambient and tex diffuse have same values
-    
-    vec3 texSpecular = vec3(texture(material.specular, TexCoord));
-
     //Get Normal
     vec3 norm = normalize(Normal);
     //Get View Direction
@@ -114,31 +98,14 @@ void main()
     //Spot Light
     result += CalculateSpotLights(spotLight,norm, FragPos, viewDir);
 
-    //// ambient
-    //vec3 ambient = light.ambient  * tex;
-  	//
-    //// diffuse 
-    ////vec3 norm = normalize(Normal);
-    //vec3 lightDir = normalize(lightPos - FragPos);
-    //float diff = max(dot(norm, lightDir), 0.0);
-    //vec3 diffuse = light.diffuse * (diff * tex);
-    //
-    //// specular
-    //float specularStrength = 0.5;
-    ////vec3 viewDir = normalize(viewPos - FragPos);
-    //vec3 reflectDir = reflect(-lightDir, norm);  
-    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    //vec3 specular = light.specular * (spec * texSpecular); 
-    //
-    ////vec3 result = ambient + diffuse + specular;
     FragColor = vec4(result, 1.0);
 }
 
 vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 tex = vec3(texture(material.diffuse, TexCoord)); //tex ambient and tex diffuse have same values
+    vec3 tex = vec3(texture(diffuse0, TexCoord)); //tex ambient and tex diffuse have same values
     
-    vec3 texSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 texSpecular = vec3(texture(specular0, TexCoord));
 
     //Set light direction. 
     //Remember to reverse the direction. Users set the direction from the light source. OpenGl reads it the other way
@@ -162,9 +129,9 @@ vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir)
 
 vec3 CalculatePointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 tex = vec3(texture(material.diffuse, TexCoord)); //tex ambient and tex diffuse have same values
+    vec3 tex = vec3(texture(diffuse0, TexCoord)); //tex ambient and tex diffuse have same values
     
-    vec3 texSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 texSpecular = vec3(texture(specular0, TexCoord));
     
     //Get light direction
     vec3 lightDir = normalize(light.position - fragPos);
@@ -198,9 +165,9 @@ vec3 CalculatePointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 view
 
 vec3 CalculateSpotLights(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 tex = vec3(texture(material.diffuse, TexCoord)); //tex ambient and tex diffuse have same values
+    vec3 tex = vec3(texture(diffuse0, TexCoord)); //tex ambient and tex diffuse have same values
     
-    vec3 texSpecular = vec3(texture(material.specular, TexCoord));
+    vec3 texSpecular = vec3(texture(specular0, TexCoord));
 
     //Get light direction
     vec3 lightDir = normalize(light.position - fragPos);

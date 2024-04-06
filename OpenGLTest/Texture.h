@@ -9,11 +9,11 @@ class Texture
 {
 	public:
 		GLuint ID;
-		GLenum type;
-		GLenum slot;
+		const char* type;
+		GLuint slot;
 		GLenum format;
 
-		Texture(const char* image, GLenum textureType, GLenum slot, GLenum pixelType);
+		Texture(const char* image, const char* textureType, GLuint slot, GLenum pixelType);
 
 		void TextureUnit(Shader& shader, const char* uniform, GLuint unit);
 		void Activate();
