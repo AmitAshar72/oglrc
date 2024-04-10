@@ -6,14 +6,6 @@ struct Material {
     float shininess;
 };
 
-struct Light {
-    vec3 position;
-  
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
 struct DirectionLight 
 {
     vec3 direction;
@@ -63,7 +55,7 @@ out vec4 FragColor;
 
 //Light
 uniform vec3 viewPos;
-uniform DirectionLight dirlight;
+uniform DirectionLight dirLight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
 
@@ -79,6 +71,20 @@ vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalculateSpotLights(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
+/* //COMMENTED CODE START - 1
+//To visualize depth buffer
+float near = 0.1; 
+float far  = 100.0; 
+ 
+
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+*/ //COMMENTED CODE END - 1
+
+
 void main()
 {
     //Get Normal
@@ -87,18 +93,25 @@ void main()
     vec3 viewDir =  normalize(viewPos - FragPos);
 
     //Direction Light
-    vec3 result = CalculateDirectionLights(dirlight, norm, viewDir);
-
+    vec3 result = CalculateDirectionLights(dirLight, norm, viewDir);
+    
     //Point Lights 
-    for(int i = 0; i < NR_POINT_LIGHTS; ++i)
-    {
-        result += CalculatePointLights(pointLights[i],norm, FragPos, viewDir);
-    }
+    //for(int i = 0; i < NR_POINT_LIGHTS; ++i)
+    //{
+    //    result += CalculatePointLights(pointLights[i],norm, FragPos, viewDir);
+    //}
 
     //Spot Light
-    result += CalculateSpotLights(spotLight,norm, FragPos, viewDir);
-
+    //result += CalculateSpotLights(spotLight,norm, FragPos, viewDir);
+    
     FragColor = vec4(result, 1.0);
+
+    /* //COMMENTED CODE START - 2
+    //Visualize Depth Buffer, Fog Effect
+    float depth = LinearizeDepth(gl_FragCoord.z) / far;
+    vec4 depthVec4 = vec4(vec3(pow(depth, 1.4)), 1.0);
+    FragColor = vec4(vec3(depth) * result, 1.0) * (1 - depthVec4) + depthVec4;
+    */ //COMMENTED CODE END - 2
 }
 
 vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir)
@@ -116,7 +129,7 @@ vec3 CalculateDirectionLights(DirectionLight light, vec3 normal, vec3 viewDir)
     
     //Specular shading
     vec3 reflectDir = reflect(-lightDir, normal);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);    
         
     //Ambient, diffuse, specular
     vec3 ambient = light.ambient  * tex;

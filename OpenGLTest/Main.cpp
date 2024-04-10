@@ -9,6 +9,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos); //callback fu
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset); // Callback function for mouse scroll
 void ProcessInput(GLFWwindow* window); 
 void SetupLights(Shader& shader, Camera& camera); //Light parameters are set here
+void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::mat4& projection, glm::mat4& view, glm::mat4& model);
+bool IsCursorOnModel(double xPos, double yPos, const glm::vec3& modPos, float tolerance);
 
 //Screen dimensions
 const unsigned int SCR_WIDTH = 800;
@@ -92,29 +94,41 @@ float lastFrame = 0.0f; // Time of last frame
 Vertex lightVertices[] =
 { //     COORDINATES     //
 	Vertex{glm::vec3(-0.5f, -0.5f,  0.5f)},
+	Vertex{glm::vec3(0.5f, -0.5f,  0.5f)},
+	Vertex{glm::vec3(0.5f,  0.5f,  0.5f)},
+	Vertex{glm::vec3(-0.5f,  0.5f,  0.5f)},
+
 	Vertex{glm::vec3(-0.5f, -0.5f, -0.5f)},
 	Vertex{glm::vec3(0.5f, -0.5f, -0.5f)},
-	Vertex{glm::vec3(0.5f, -0.5f,  0.5f)},
-	Vertex{glm::vec3(-0.5f,  0.5f,  0.5f)},
-	Vertex{glm::vec3(-0.5f,  0.5f, -0.5f)},
-	Vertex{glm::vec3(0.5f,  0.5f, -0.5f)},
-	Vertex{glm::vec3(0.5f,  0.5f,  0.5f)}
+	Vertex{glm::vec3(0.5f,  0.5f, -0.5f)},	
+	Vertex{glm::vec3(-0.5f,  0.5f, -0.5f)}
 };
 
 GLuint lightIndices[] =
 {
+	//Front face
 	0, 1, 2,
 	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
+
+	//Left Face
+	4, 0, 3,
+	4, 3, 7,
+
+	//Back face
+	5, 4, 7,
+	5, 7, 6,
+
+	//Top Face
+	3, 2, 6,
+	3, 6, 7,
+
+	//Right face
+	1, 5, 6,
+	1, 6, 2,
+
+	//Bottom face
+	1, 0, 4,
+	1, 4, 5
 };
 
 // positions of the point lights
@@ -157,6 +171,13 @@ int main()
 	
 	//Enable Depth Buffer
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST); //Enable Stencil buffer
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); //stencil fail, stencil and depth fail, stencil and depth pass
+
+	//Face Culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	//glFrontFace(GL_CCW);
 
 	//Initialize our default shaders
 	Shader ourShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/VertexShader.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/FragmentShader.fs");
@@ -164,11 +185,16 @@ int main()
 	//Model loading
 	Model mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/backpack/backpack.obj");
 
+	Texture textures[]
+	{
+		Texture(textureDirectory, "container2.png", "diffuse", 0, GL_UNSIGNED_BYTE)
+	};
+
 	// Store mesh data in vectors for the mesh
 	/*std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
-	std::vector <Texture> tex;*/
-	//Mesh cube(verts, ind, tex);
+	std::vector <Texture> tex;
+	Mesh mod(verts, ind, tex);*/
 
 #pragma region Light Cube
 	////Initialize Light Shader
@@ -177,17 +203,20 @@ int main()
 	// Store mesh data in vectors for the mesh
 	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
 	std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	std::vector <Texture> tex;
+	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
 
 	Mesh lightCube(lightVerts, lightInd, tex);
 
 #pragma endregion Light Cube
 	
+	Shader outlineShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Outline.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Outline.fs");
+
 	//Set Light Color, the value is fed into LightShader.fs
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	float radius = 5.0f;
 	float speed = 2.0f;
+	float tolerance = 0.95f;
 
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
@@ -200,11 +229,11 @@ int main()
 		ProcessInput(window);
 
 		//Render Call
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//Activate Shader
-		ourShader.Activate();		
+		ourShader.Activate();
 		ourShader.setVec3("viewPos", camera.Position); //Update view position with the current camera position
 		
 		//Setup lights
@@ -216,16 +245,30 @@ int main()
 
 		// camera/view transformation
 		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("view", view);		
+		ourShader.setMat4("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f));
 		//model = glm::scale(model, glm::vec3(0.05f));
 		ourShader.setMat4("model", model);
 
-		//cube.Draw(ourShader);
-		//Draw our model
+		glm::mat4 gVPM = projection * view * model;
+		glm::vec3 vpm_vec = gVPM[3];
+
+		/*if (IsCursorOnModel(lastX / SCR_WIDTH, lastY / SCR_LENGTH, vpm_vec, 0.5f))
+		{
+			EnableOutline(mod, ourShader, outlineShader, projection, view, model);
+		}
+
+		else 
+		{
+			mod.Draw(ourShader);
+		}*/
+		
+		
+		//Draw w/o outline
 		mod.Draw(ourShader);
+			
 
 #pragma region Light Cube draw
 		//Activate light shader
@@ -238,8 +281,8 @@ int main()
 		{
 			glm::mat4 lightModel = glm::mat4(1.0f);
 
-			pointLightPositions[i].x = radius * cos(speed * currentFrame);
-			pointLightPositions[i].y = radius * sin(speed * currentFrame);
+			/*pointLightPositions[i].x = radius * cos(speed * currentFrame);
+			pointLightPositions[i].y = radius * sin(speed * currentFrame);*/
 
 			lightModel = glm::translate(lightModel, pointLightPositions[i]);
 			lightModel = glm::scale(lightModel, glm::vec3(0.2f)); // Make it a smaller cube
@@ -388,4 +431,50 @@ void SetupLights(Shader& shader, Camera& camera)
 	shader.setFloat("spotLight.quadratic", 0.032f);
 	shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 	shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+}
+
+bool IsCursorOnModel(double xPos, double yPos, const glm::vec3& modPos, float tolerance) 
+{
+	return abs(modPos.x - xPos) <= tolerance && abs(modPos.y - yPos) <= tolerance;
+}
+
+//Stencil Buffer
+void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::mat4& projection, glm::mat4& view, glm::mat4& model) 
+{
+	//Theory of Outlining models:
+		//1. Render our object normally
+		//2. Update Stencil Buffer with value 1 wherever we have a fragment of the object. And to 0 everywhere we do not have a fragment to draw
+		//3. Disable writing to the stencil buffer so we dont accidentally modify it. 
+		//   We also disable depth testing, so the next object we draw will completely be in front of the previous one. New object = Stencil. Previous = Color
+		//4. We render a scaled up version of the new object with flat color and with the condition to draw its stencil value whereever fragment value is NOT 1
+		//5. Restore writing to the stencil and enable depth buffer again.
+
+		//Stencil Test always passes 
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	//Enable modification of the stencil buffer
+	glStencilMask(0xFF);
+
+	//cube.Draw(ourShader);
+	//Draw our model
+	mod.Draw(modShader);
+
+	//Make it so only the pixels without the value 1 pass the test
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	//Disable stencil and depth 
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
+
+	outlineShader.Activate();
+	outlineShader.setFloat("outlining", 0.01f);
+	outlineShader.setMat4("projection", projection);
+	outlineShader.setMat4("view", view);
+	outlineShader.setMat4("model", model);
+	mod.Draw(outlineShader);
+
+	//Enable stencil buffer modification again
+	glStencilMask(0xFF);
+	//This time only render pixel that are not 1 or are 0
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	//Enable depth buffer 
+	glEnable(GL_DEPTH_TEST);
 }

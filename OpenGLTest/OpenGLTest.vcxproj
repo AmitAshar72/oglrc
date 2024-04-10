@@ -162,6 +162,8 @@
     <None Include="LightShader.fs" />
     <None Include="LightShader.vs" />
     <None Include="ModelLoading.fs" />
+    <None Include="Outline.fs" />
+    <None Include="Outline.vs" />
     <None Include="VertexShader.vs" />
   </ItemGroup>
   <ItemGroup>

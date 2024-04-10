@@ -100,6 +100,12 @@
     <None Include="ModelLoading.fs">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Outline.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Outline.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Textures\container.jpg">
