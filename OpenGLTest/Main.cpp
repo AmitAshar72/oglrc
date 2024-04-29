@@ -19,63 +19,79 @@ const unsigned int SCR_LENGTH= 600;
 //Textures directory
 static const std::string textureDirectory = "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures";
 
-//Vertices of a cube with pos, normals, color and tex
-Vertex vertices[] = {
-	// positions			  //Normals				// colors         // texture 
-//																		// coords
-	// Front face
-	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-	// Back face
-	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-	// Left face
-	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-	// Right face
-	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-	// Top face
-	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-	// Bottom face
-	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
-	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)}
+////Vertices of a cube with pos, normals, color and tex
+//Vertex vertices[] = {
+//	// positions			  //Normals				// colors         // texture 
+////																		// coords
+//	// Front face
+//	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+//	// Back face
+//	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+//	// Left face
+//	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+//	// Right face
+//	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+//	// Top face
+//	{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+//	// Bottom face
+//	{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+//	{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)},
+//	{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+//	{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)}
+//};
+//
+////indices of the vertices defined above
+//GLuint indices[] = 
+//{  
+//	// Front face
+//		0, 1, 2,
+//		2, 3, 0,
+//		// Back face
+//		4, 5, 6,
+//		6, 7, 4,
+//		// Left face
+//		8, 9, 10,
+//		10, 11, 8,
+//		// Right face
+//		12, 13, 14,
+//		14, 15, 12,
+//		// Top face
+//		16, 17, 18,
+//		18, 19, 16,
+//		// Bottom face
+//		20, 21, 22,
+//		22, 23, 20
+//};
+
+// Vertices coordinates
+Vertex vertices[] =
+{ 
+	{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+	{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+	{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+	{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
 };
 
-//indices of the vertices defined above
-GLuint indices[] = 
-{  
-	// Front face
-		0, 1, 2,
-		2, 3, 0,
-		// Back face
-		4, 5, 6,
-		6, 7, 4,
-		// Left face
-		8, 9, 10,
-		10, 11, 8,
-		// Right face
-		12, 13, 14,
-		14, 15, 12,
-		// Top face
-		16, 17, 18,
-		18, 19, 16,
-		// Bottom face
-		20, 21, 22,
-		22, 23, 20
+// Indices for vertices order
+GLuint indices[] =
+{
+	0, 1, 2,
+	0, 2, 3
 };
 
 //Camera object with initial pos
@@ -139,6 +155,11 @@ glm::vec3 pointLightPositions[] = {
 	glm::vec3(0.0f,  0.0f, -3.0f)
 };
 
+glm::vec3 Pos = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 CurrentVelocity = glm::vec3(0.0f);
+float acceleration = 5.0f;
+float deceleration = 2.5f;
+float maxspeed = 60.0f;
 
 int main()
 {
@@ -179,22 +200,30 @@ int main()
 	glCullFace(GL_FRONT);
 	//glFrontFace(GL_CCW);
 
+	camera.SetScreenDimensions(SCR_WIDTH, SCR_LENGTH);
+
 	//Initialize our default shaders
 	Shader ourShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/VertexShader.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/FragmentShader.fs");
 
 	//Model loading
-	Model mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/backpack/backpack.obj");
+	Model mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/backpack/backpack.obj", Pos);
 
 	Texture textures[]
 	{
-		Texture(textureDirectory, "container2.png", "diffuse", 0, GL_UNSIGNED_BYTE)
+		Texture(textureDirectory, "container2.png", "diffuse", 0, GL_UNSIGNED_BYTE),
+		Texture(textureDirectory, "container2_specular.png", "specular", 1, GL_UNSIGNED_BYTE)
+	};
+	
+	Texture lightTextures[]
+	{
+		Texture(textureDirectory, "rcube/ColorBase-1001.png", "diffuse", 0, GL_UNSIGNED_BYTE)
 	};
 
 	// Store mesh data in vectors for the mesh
-	/*std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
-	std::vector <Texture> tex;
-	Mesh mod(verts, ind, tex);*/
+	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+	Mesh floor(verts, ind, tex);
 
 #pragma region Light Cube
 	////Initialize Light Shader
@@ -203,9 +232,9 @@ int main()
 	// Store mesh data in vectors for the mesh
 	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
 	std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+	std::vector <Texture> lightTex(lightTextures, lightTextures + sizeof(lightTextures) / sizeof(Texture));
 
-	Mesh lightCube(lightVerts, lightInd, tex);
+	Mesh lightCube(lightVerts, lightInd, lightTex);
 
 #pragma endregion Light Cube
 	
@@ -227,7 +256,8 @@ int main()
 
 		//Input
 		ProcessInput(window);
-
+		mod.HandleVehicleInputs(window, deltaTime);
+		
 		//Render Call
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -239,21 +269,21 @@ int main()
 		//Setup lights
 		SetupLights(ourShader, camera);
 
-		// pass projection matrix to shader (note that in this case it could change every frame)
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_LENGTH, 0.1f, 100.0f);
-		ourShader.setMat4("projection", projection);
+		//// pass projection matrix to shader (note that in this case it could change every frame)
+		//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_LENGTH, 0.1f, 100.0f);
+		//ourShader.setMat4("projection", projection);
 
-		// camera/view transformation
-		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("view", view);
+		//// camera/view transformation
+		//glm::mat4 view = camera.GetViewMatrix();
+		//ourShader.setMat4("view", view);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f));
-		//model = glm::scale(model, glm::vec3(0.05f));
-		ourShader.setMat4("model", model);
+		//glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::translate(model, Pos);
+		//model = glm::scale(model, glm::vec3(0.025f));
+		//ourShader.setMat4("model", model);
 
-		glm::mat4 gVPM = projection * view * model;
-		glm::vec3 vpm_vec = gVPM[3];
+		//glm::mat4 gVPM = projection * view * model;
+		//glm::vec3 vpm_vec = gVPM[3];
 
 		/*if (IsCursorOnModel(lastX / SCR_WIDTH, lastY / SCR_LENGTH, vpm_vec, 0.5f))
 		{
@@ -265,24 +295,36 @@ int main()
 			mod.Draw(ourShader);
 		}*/
 		
+		//mod.PrintData();
 		
 		//Draw w/o outline
-		mod.Draw(ourShader);
+		mod.Draw(ourShader, camera);
+		//mod.Position = Pos;
+
+		camera.UpdateCameraMatrix(ourShader);
+
+		glm::mat4 floorModel = glm::mat4(1.0f);
+		floorModel = glm::translate(floorModel, glm::vec3(0.0f));
+		floorModel = glm::scale(floorModel, glm::vec3(3.0f));
+		ourShader.setMat4("model", floorModel);
+		floor.Draw(ourShader);
 			
 
 #pragma region Light Cube draw
 		//Activate light shader
 		lightShader.Activate();
 		
-		lightShader.setMat4("projection", projection);
-		lightShader.setMat4("view", view);
+		/*lightShader.setMat4("projection", projection);
+		lightShader.setMat4("view", view);*/
+
+		camera.UpdateCameraMatrix(lightShader);
 
 		for (unsigned int i = 0; i < 1; i++)
 		{
 			glm::mat4 lightModel = glm::mat4(1.0f);
 
-			/*pointLightPositions[i].x = radius * cos(speed * currentFrame);
-			pointLightPositions[i].y = radius * sin(speed * currentFrame);*/
+			pointLightPositions[i].x = radius * cos(speed * currentFrame);
+			pointLightPositions[i].y = radius * sin(speed * currentFrame);
 
 			lightModel = glm::translate(lightModel, pointLightPositions[i]);
 			lightModel = glm::scale(lightModel, glm::vec3(0.2f)); // Make it a smaller cube
@@ -329,6 +371,7 @@ int InitGlad()
 void Framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	camera.SetScreenDimensions(width, height);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -367,14 +410,30 @@ void ProcessInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 	} 
 	
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+	//float velocity = 1.0f * deltaTime;
+	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	//{	
+	//	//camera.ProcessKeyboard(FORWARD, deltaTime);
+	//	Pos += glm::vec3(0.0f, 0.0f, -velocity);
+	//}
+	//
+	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	//{
+	//	//camera.ProcessKeyboard(BACKWARD, deltaTime);
+	//	Pos += glm::vec3(0.0f, 0.0f, velocity);
+	//}
+
+	//if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	//{	
+	//	//camera.ProcessKeyboard(LEFT, deltaTime);
+	//	Pos += glm::vec3(-velocity, 0.0f, 0.0f);
+	//}
+
+	//if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	//{	
+	//	//camera.ProcessKeyboard(RIGHT, deltaTime);
+	//	Pos += glm::vec3(velocity, 0.0f, 0.0f);
+	//}
 }
 
 void SetupLights(Shader& shader, Camera& camera) 
@@ -383,8 +442,8 @@ void SetupLights(Shader& shader, Camera& camera)
 	shader.setFloat("material.shininess", 32.0f);
 
 	//Directional Light
-	shader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	shader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
+	shader.setVec3("dirLight.ambient", 0.25f, 0.25f, 0.25f);
 	shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
@@ -456,7 +515,7 @@ void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::ma
 
 	//cube.Draw(ourShader);
 	//Draw our model
-	mod.Draw(modShader);
+	mod.Draw(modShader, camera);
 
 	//Make it so only the pixels without the value 1 pass the test
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -469,7 +528,7 @@ void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::ma
 	outlineShader.setMat4("projection", projection);
 	outlineShader.setMat4("view", view);
 	outlineShader.setMat4("model", model);
-	mod.Draw(outlineShader);
+	mod.Draw(outlineShader, camera);
 
 	//Enable stencil buffer modification again
 	glStencilMask(0xFF);

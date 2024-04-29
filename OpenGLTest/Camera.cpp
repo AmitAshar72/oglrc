@@ -48,6 +48,29 @@ void Camera::ProcessMouseScroll(float yoffset)
 		Zoom = 45.0f;
 }
 
+void Camera::UpdateCameraMatrix(Shader& shader)
+{
+	//Update Model, view and projection here
+	// pass projection matrix to shader (note that in this case it could change every frame)
+	glm::mat4 projection = glm::perspective(glm::radians(Zoom), (float)Width / (float)Height, NearPlane, FarPlane);
+	shader.setMat4("projection", projection);
+
+	// camera/view transformation
+	glm::mat4 view = GetViewMatrix();
+	shader.setMat4("view", view);
+}
+
+void Camera::SetScreenDimensions(unsigned int width, unsigned int height)
+{
+	Width = width;
+	Height = height;
+}
+
+void Camera::FollowModel(glm::vec3& modPos)
+{
+	Position = modPos - glm::vec3(0.0f, -2.0f, -5.0f);
+}
+
 //For the current camera setup, we dont change Roll values. We only focus on Pitch(x axis) and Yaw (Y axis)
 void Camera::updateCameraVectors()
 {

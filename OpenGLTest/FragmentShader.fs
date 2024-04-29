@@ -96,10 +96,10 @@ void main()
     vec3 result = CalculateDirectionLights(dirLight, norm, viewDir);
     
     //Point Lights 
-    //for(int i = 0; i < NR_POINT_LIGHTS; ++i)
-    //{
-    //    result += CalculatePointLights(pointLights[i],norm, FragPos, viewDir);
-    //}
+    for(int i = 0; i < NR_POINT_LIGHTS; ++i)
+    {
+        result += CalculatePointLights(pointLights[i],norm, FragPos, viewDir);
+    }
 
     //Spot Light
     //result += CalculateSpotLights(spotLight,norm, FragPos, viewDir);

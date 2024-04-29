@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Shader.h"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -19,6 +20,8 @@ const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
+const float NEAR_PLANE = 0.1f;
+const float FAR_PLANE = 100.0f;
 
 class Camera
 {
@@ -37,18 +40,25 @@ class Camera
 		float MovementSpeed;
 		float MouseSensitivity;
 		float Zoom;
+		float NearPlane;
+		float FarPlane;
+		// Screen dimensions
+		unsigned int Width;
+		unsigned int Height;
 		// constructor with vectors
-		Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) 
+		Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : 
+			Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM), NearPlane(NEAR_PLANE), FarPlane(FAR_PLANE)
 		{
 			Position = position;
 			WorldUp = up;
 			Yaw = yaw;
 			Pitch = pitch;
-			updateCameraVectors();
+			updateCameraVectors();			
 		}
 		
 		// constructor with scalar values
-		Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) 
+		Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : 
+			Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM), NearPlane(NEAR_PLANE), FarPlane(FAR_PLANE)
 		{
 			Position = glm::vec3(posX, posY, posZ);
 			WorldUp = glm::vec3(upX, upY, upZ);
@@ -61,6 +71,11 @@ class Camera
 		void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 		void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
 		void ProcessMouseScroll(float yoffset);
+
+		void UpdateCameraMatrix(Shader& shader);
+		void SetScreenDimensions(unsigned int width, unsigned int height);
+
+		void FollowModel(glm::vec3& modPos);
 
 	private:
 		void updateCameraVectors();
