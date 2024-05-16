@@ -3,91 +3,13 @@
 Model::Model(std::string const& path, glm::vec3& initPos)
 {
 	loadModel(path);
-    v.Pos = initPos;
-    v.CurrentVelocity = glm::vec3(0.0f);
-    v.currentSpeed = 0.0f;
+    ModelPosition = initPos;    
 }
 
 void Model::Draw(Shader& shader, Camera& cam)
 {
-    ModelPosition(shader, cam);
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i].Draw(shader);
-}
-
-void Model::HandleVehicleInputs(GLFWwindow* window, float deltaTime)
-{
-    // Calculate the velocity change based on acceleration and deceleration
-    glm::vec3 accelerationVector(0.0f);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        accelerationVector.z = -v.acceleration;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        accelerationVector.z = v.acceleration;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        accelerationVector.x = -v.acceleration;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        accelerationVector.x = v.acceleration;
-    }
-
-    // Update the velocity with acceleration
-    v.CurrentVelocity += accelerationVector * deltaTime;
-
-    // Limit the velocity to the maximum speed
-    float currentSpeed = glm::length(v.CurrentVelocity);
-    if (currentSpeed > v.maxSpeed)
-    {
-        v.CurrentVelocity = glm::normalize(v.CurrentVelocity) * v.maxSpeed;
-    }
-
-    // Update the position with velocity
-    v.Pos += v.CurrentVelocity * deltaTime;
-
-    //Pos = modelPosition;
-    //camera.FollowModel(Pos);
-
-    // Apply deceleration if no input is received
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE ||
-        glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE ||
-        glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE ||
-        glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-    {
-        float decelerationFactor = v.deceleration * deltaTime;
-        if (currentSpeed > decelerationFactor)
-        {
-            v.CurrentVelocity -= glm::normalize(v.CurrentVelocity) * decelerationFactor;
-        }
-        else
-        {
-            // If current speed is below deceleration factor, set velocity to zero
-            v.CurrentVelocity = glm::vec3(0.0f);
-        }
-    }
-
-    //std::cout << "Velocity: " << modelVelocity.x << ", " << modelVelocity.y << ", " << modelVelocity.x << std::endl;
-    std::cout << "currentSpeed: " << currentSpeed << std::endl;
-}
-
-void Model::ModelPosition(Shader& shader, Camera& cam)
-{
-    cam.UpdateCameraMatrix(shader);
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, v.Pos);
-    model = glm::scale(model, glm::vec3(0.05f));
-    shader.setMat4("model", model);
-
-    cam.FollowModel(v.Pos);
 }
 
 void Model::loadModel(std::string const& path)
@@ -131,6 +53,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
     std::vector<Texture> textures;
+
+
+    //calculateBoundingBox((Mesh*) mesh);
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)

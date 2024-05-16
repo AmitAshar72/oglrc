@@ -26,6 +26,8 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 	VAO.Unbind();
 	VBO.Unbind();
 	EBO.Unbind();
+
+	calculateBoundingBox(this);
 }
 
 
@@ -59,4 +61,20 @@ void Mesh::Draw(Shader& shader)
 
 	// Draw the actual mesh
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+}
+
+void Mesh::SetMeshProperties(Shader& shader, Camera& cam, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale)
+{
+	//Activate Shader
+	shader.Activate();
+	shader.setVec3("viewPos", cam.Position);
+
+	cam.UpdateCameraMatrix(shader);
+
+	glm::mat4 meshMat = glm::mat4(1.0f);
+	Position = position;
+	meshMat = glm::translate(meshMat, position);	
+	meshMat = glm::scale(meshMat, scale);
+
+	shader.setMat4("model", meshMat);
 }

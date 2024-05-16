@@ -1,4 +1,5 @@
-#include "Model.h"
+#include "RaceManager.h"
+#include "Vehicle.h"
 #include <GLFW/glfw3.h>
 
 
@@ -13,8 +14,8 @@ void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::ma
 bool IsCursorOnModel(double xPos, double yPos, const glm::vec3& modPos, float tolerance);
 
 //Screen dimensions
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_LENGTH= 600;
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_LENGTH= 1200;
 
 //Textures directory
 static const std::string textureDirectory = "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures";
@@ -90,12 +91,63 @@ Vertex vertices[] =
 // Indices for vertices order
 GLuint indices[] =
 {
+	2, 1, 0,
+	3, 2, 0
+};
+
+Vertex trackVertices[] = {
+	// Bottom surface
+	// Triangle 1
+	{glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(0.0f, 0.0f)}, // Vertex 1
+	{glm::vec3(-10.0f, 0.0f,  10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(0.0f, 1.0f)}, // Vertex 2
+	{glm::vec3(10.0f, 0.0f,  10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f)}, // Vertex 3
+	// Triangle 2
+	{glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(0.0f, 0.0f)}, // Vertex 4
+	{glm::vec3(10.0f, 0.0f,  10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f)}, // Vertex 5
+	{glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 0.0f)}, // Vertex 6
+
+	// Sidewalls
+	// Left wall
+	// Triangle 1
+	{glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 0.0f)}, // Vertex 1
+	{glm::vec3(-10.0f, 2.0f, -10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 1.0f)}, // Vertex 2
+	{glm::vec3(-10.0f, 2.0f,  10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 1.0f)}, // Vertex 3
+	// Triangle 2					  
+	{glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 0.0f)}, // Vertex 4
+	{glm::vec3(-10.0f, 2.0f,  10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 1.0f)}, // Vertex 5
+	{glm::vec3(-10.0f, 0.0f,  10.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 0.0f)}, // Vertex 6
+
+	// Right wall
+	// Triangle 1
+	{glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 0.0f)}, // Vertex 1
+	{glm::vec3(10.0f, 2.0f, -10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 1.0f)}, // Vertex 2
+	{glm::vec3(10.0f, 2.0f,  10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 1.0f)}, // Vertex 3
+	// Triangle 2
+	{glm::vec3(10.0f, 0.0f, -10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(0.0f, 0.0f)}, // Vertex 4
+	{glm::vec3(10.0f, 2.0f,  10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 1.0f)}, // Vertex 5
+	{glm::vec3(10.0f, 0.0f,  10.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec2(1.0f, 0.0f)}  // Vertex 6
+};
+
+
+GLuint trackIndices[] = {
+	// Bottom surface
 	0, 1, 2,
-	0, 2, 3
+	3, 4, 5,
+
+	// Left wall
+	6, 7, 8,
+	9, 10, 11,
+
+	// Right wall
+	/*12, 13, 14,
+	15, 16, 17*/
+
+	14, 13, 12,
+	17, 16, 15
 };
 
 //Camera object with initial pos
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
 
 //Mouse Inputs
 float lastX = SCR_WIDTH / 2.0;
@@ -149,17 +201,19 @@ GLuint lightIndices[] =
 
 // positions of the point lights
 glm::vec3 pointLightPositions[] = {
-	glm::vec3(0.7f,  0.2f,  2.0f),
-	glm::vec3(2.3f, -3.3f, -4.0f),
-	glm::vec3(-4.0f,  2.0f, -12.0f),
-	glm::vec3(0.0f,  0.0f, -3.0f)
+	glm::vec3(9.95f,  2.1f,  -95.0f),
+	glm::vec3(-9.95f,  2.1f, -25.0f),
+	glm::vec3(9.95f,  2.1f, 25.0f),
+	glm::vec3(-9.95f,  2.1f, 95.0f)
 };
 
-glm::vec3 Pos = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 Pos = glm::vec3(0.0f, 0.010f, 105.0f);
 glm::vec3 CurrentVelocity = glm::vec3(0.0f);
 float acceleration = 5.0f;
 float deceleration = 2.5f;
 float maxspeed = 60.0f;
+
+bool ButtonPress = false;
 
 int main()
 {
@@ -197,16 +251,23 @@ int main()
 
 	//Face Culling
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
-	//glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 	camera.SetScreenDimensions(SCR_WIDTH, SCR_LENGTH);
 
 	//Initialize our default shaders
 	Shader ourShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/VertexShader.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/FragmentShader.fs");
+	
+	Shader colorShader("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/VertexShader.vs", "D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Color_FragmentShader.fs");
+
 
 	//Model loading
-	Model mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/backpack/backpack.obj", Pos);
+	Vehicle mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/f1/Formula 1 mesh.obj", Pos, 1500, acceleration, deceleration, maxspeed);
+	glm::vec3 modScale = glm::vec3(0.0025f);
+	glm::vec3 modRotation = glm::vec3(0.0f, -90.0f, 0.0f);
+	mod.SetScale(modScale);
+	mod.SetRotation(modRotation);
 
 	Texture textures[]
 	{
@@ -214,16 +275,45 @@ int main()
 		Texture(textureDirectory, "container2_specular.png", "specular", 1, GL_UNSIGNED_BYTE)
 	};
 	
-	Texture lightTextures[]
+	/*Texture lightTextures[]
 	{
-		Texture(textureDirectory, "rcube/ColorBase-1001.png", "diffuse", 0, GL_UNSIGNED_BYTE)
+		Texture(textureDirectory, "rcube/ColorBase-1001.png", "diffuse", 2, GL_UNSIGNED_BYTE)
+	};*/
+	
+	Texture raceLineTex[]
+	{
+		Texture(textureDirectory, "raceline.png", "diffuse", 0, GL_UNSIGNED_BYTE)
 	};
 
 	// Store mesh data in vectors for the mesh
-	std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-	std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
+	std::vector <Vertex> verts(trackVertices, trackVertices + sizeof(trackVertices) / sizeof(Vertex));
+	std::vector <GLuint> ind(trackIndices, trackIndices + sizeof(trackIndices) / sizeof(GLuint));
 	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
-	Mesh floor(verts, ind, tex);
+	
+	glm::vec3 trackPosition = glm::vec3(0.0f);
+	glm::vec3 trackRotation = glm::vec3(0.0f);
+	glm::vec3 trackScale = glm::vec3(1.0f, 1.0f, 10.0f);
+
+	Mesh track(verts, ind, tex);
+
+	track.UpdateBoundingBoxScale(trackScale);
+
+	//Race Line
+	std::vector <Vertex> lineVerts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector <GLuint> lineInd(indices, indices + sizeof(indices) / sizeof(GLuint));
+	std::vector <Texture> lineTex(raceLineTex, raceLineTex + sizeof(raceLineTex) / sizeof(Texture));
+	glm::vec3 raceLineScale = glm::vec3(10.0f, 1.0f, 1.0f);
+	glm::vec3 raceLineRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	
+
+	Mesh raceLine(lineVerts, lineInd, lineTex);
+	glm::vec3 raceLinePosition = glm::vec3(0.0f, 0.01f, 95.0f);
+	raceLine.UpdateBoundingBoxScale(raceLineScale);
+	
+	Mesh raceLine_finish(lineVerts, lineInd, lineTex);
+	glm::vec3 raceLine_finishPosition = glm::vec3(0.0f, 0.01f, -95.0f);
+	raceLine_finish.UpdateBoundingBoxScale(raceLineScale);
+	
 
 #pragma region Light Cube
 	////Initialize Light Shader
@@ -232,9 +322,15 @@ int main()
 	// Store mesh data in vectors for the mesh
 	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
 	std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	std::vector <Texture> lightTex(lightTextures, lightTextures + sizeof(lightTextures) / sizeof(Texture));
+	std::vector <Texture> lightTex;// (lightTextures, lightTextures + sizeof(lightTextures) / sizeof(Texture));
+	
+	//glm::vec3 lightPosition = glm::vec3(0.0f);
+	glm::vec3 lightRotation = glm::vec3(0.0f);
+	glm::vec3 lightScale = glm::vec3(0.2f);
 
 	Mesh lightCube(lightVerts, lightInd, lightTex);
+
+	lightCube.UpdateBoundingBoxScale(lightScale);
 
 #pragma endregion Light Cube
 	
@@ -247,28 +343,40 @@ int main()
 	float speed = 2.0f;
 	float tolerance = 0.95f;
 
+	RaceManager rm(mod, track, raceLine, raceLine_finish);
+	//double rpm = mod.CalculateRPM(50);
+	double engineForce = mod.CalculateEngineForce(1200, mod.torqueCurve);
+	mod.SetAcceleration(engineForce);
+
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		lastFrame = currentFrame;		
 
 		//Input
 		ProcessInput(window);
 		mod.HandleVehicleInputs(window, deltaTime);
-		
+
+		camera.FollowModel(mod.ModelPosition, deltaTime);
+
+		if (ButtonPress) 
+		{
+			mod.update(deltaTime);
+		}
+
 		//Render Call
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+			
 		//Activate Shader
 		ourShader.Activate();
 		ourShader.setVec3("viewPos", camera.Position); //Update view position with the current camera position
 		
 		//Setup lights
-		SetupLights(ourShader, camera);
-
+		SetupLights(ourShader, camera);	
+		
 		//// pass projection matrix to shader (note that in this case it could change every frame)
 		//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_LENGTH, 0.1f, 100.0f);
 		//ourShader.setMat4("projection", projection);
@@ -299,41 +407,35 @@ int main()
 		
 		//Draw w/o outline
 		mod.Draw(ourShader, camera);
-		//mod.Position = Pos;
-
-		camera.UpdateCameraMatrix(ourShader);
-
-		glm::mat4 floorModel = glm::mat4(1.0f);
-		floorModel = glm::translate(floorModel, glm::vec3(0.0f));
-		floorModel = glm::scale(floorModel, glm::vec3(3.0f));
-		ourShader.setMat4("model", floorModel);
-		floor.Draw(ourShader);
+				
+		raceLine.SetMeshProperties(ourShader, camera, raceLinePosition, raceLineRotation, raceLineScale);
+		raceLine.Draw(ourShader);
+		
+		raceLine_finish.SetMeshProperties(ourShader, camera, raceLine_finishPosition, raceLinePosition, raceLineScale);
+		raceLine_finish.Draw(ourShader);
+		
+		//SetupLights(colorShader, camera);
+		track.SetMeshProperties(ourShader, camera, trackPosition, trackRotation, trackScale);
+		track.Draw(ourShader);
 			
 
 #pragma region Light Cube draw
-		//Activate light shader
-		lightShader.Activate();
 		
-		/*lightShader.setMat4("projection", projection);
-		lightShader.setMat4("view", view);*/
-
-		camera.UpdateCameraMatrix(lightShader);
-
-		for (unsigned int i = 0; i < 1; i++)
+		for (unsigned int i = 0; i < 4; i++)
 		{
 			glm::mat4 lightModel = glm::mat4(1.0f);
 
-			pointLightPositions[i].x = radius * cos(speed * currentFrame);
-			pointLightPositions[i].y = radius * sin(speed * currentFrame);
-
-			lightModel = glm::translate(lightModel, pointLightPositions[i]);
-			lightModel = glm::scale(lightModel, glm::vec3(0.2f)); // Make it a smaller cube
-			lightShader.setMat4("model", lightModel);
+			/*pointLightPositions[i].x = radius * cos(speed * currentFrame);
+			pointLightPositions[i].y = radius * sin(speed * currentFrame);*/
+			lightCube.SetMeshProperties(lightShader, camera, pointLightPositions[i], lightRotation, lightScale);
 			lightShader.setVec3("lightColor", lightColor);
 			lightCube.Draw(lightShader);
 		}
 #pragma endregion Light Cube draw
 
+		//RaceManager
+		rm.update(deltaTime);	
+		rm.getElapsedTime();
 		//check and call events and swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -344,6 +446,7 @@ int main()
 	
 	ourShader.Delete();
 	lightShader.Delete();
+	colorShader.Delete();
 
 	//Terminate call to clean up all resources
 	glfwTerminate();
@@ -409,40 +512,31 @@ void ProcessInput(GLFWwindow* window)
 	{
 		glfwSetWindowShouldClose(window, true);
 	} 
-	
-	//float velocity = 1.0f * deltaTime;
-	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	//{	
-	//	//camera.ProcessKeyboard(FORWARD, deltaTime);
-	//	Pos += glm::vec3(0.0f, 0.0f, -velocity);
-	//}
-	//
-	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	//{
-	//	//camera.ProcessKeyboard(BACKWARD, deltaTime);
-	//	Pos += glm::vec3(0.0f, 0.0f, velocity);
-	//}
 
-	//if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	//{	
-	//	//camera.ProcessKeyboard(LEFT, deltaTime);
-	//	Pos += glm::vec3(-velocity, 0.0f, 0.0f);
-	//}
+	if (!ButtonPress && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+	{
+		ButtonPress = true;
+	}
 
-	//if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	//{	
-	//	//camera.ProcessKeyboard(RIGHT, deltaTime);
-	//	Pos += glm::vec3(velocity, 0.0f, 0.0f);
-	//}
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);*/
 }
 
 void SetupLights(Shader& shader, Camera& camera) 
 {
+	shader.Activate();
+
 	//ourShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 	shader.setFloat("material.shininess", 32.0f);
 
 	//Directional Light
-	shader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
+	shader.setVec3("dirLight.direction", 1.0f, -1.0f, 0.0f);
 	shader.setVec3("dirLight.ambient", 0.25f, 0.25f, 0.25f);
 	shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);

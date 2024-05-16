@@ -66,9 +66,12 @@ void Camera::SetScreenDimensions(unsigned int width, unsigned int height)
 	Height = height;
 }
 
-void Camera::FollowModel(glm::vec3& modPos)
+void Camera::FollowModel(glm::vec3& modPos, float dt)
 {
-	Position = modPos - glm::vec3(0.0f, -2.0f, -5.0f);
+	glm::vec3 desiredPosition = modPos - glm::vec3(0.0f, -2.0f, -6.0f);
+	Position = lerp(Position, desiredPosition, dt);
+
+	//Position = modPos - glm::vec3(0.0f, -2.0f, -6.0f);	
 }
 
 //For the current camera setup, we dont change Roll values. We only focus on Pitch(x axis) and Yaw (Y axis)

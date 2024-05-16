@@ -16,8 +16,8 @@ enum Camera_Movement {
 
 // Default camera values
 const float YAW = -90.0f;
-const float PITCH = 0.0f;
-const float SPEED = 2.5f;
+const float PITCH = -15.0f;
+const float SPEED = 7.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 const float NEAR_PLANE = 0.1f;
@@ -45,6 +45,7 @@ class Camera
 		// Screen dimensions
 		unsigned int Width;
 		unsigned int Height;
+
 		// constructor with vectors
 		Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : 
 			Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM), NearPlane(NEAR_PLANE), FarPlane(FAR_PLANE)
@@ -75,9 +76,15 @@ class Camera
 		void UpdateCameraMatrix(Shader& shader);
 		void SetScreenDimensions(unsigned int width, unsigned int height);
 
-		void FollowModel(glm::vec3& modPos);
+		void FollowModel(glm::vec3& modPos, float dt);
 
 	private:
+		float lerpTime = 7.0f;
 		void updateCameraVectors();
+
+		glm::vec3 lerp(const glm::vec3& start, const glm::vec3& end, float dt) {
+			return glm::mix(start, end, lerpTime * dt);
+		}
+
 };
 #endif 
