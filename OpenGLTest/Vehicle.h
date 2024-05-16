@@ -44,6 +44,10 @@ public:
         Acceleration = ac/Mass;
         std::cout << "Acceleration: " << Acceleration << std::endl;
     }
+    float GetAcceleration() 
+    {
+        return Acceleration;
+    }
     // Function to update the car's state
     void update(float dt) {
         // Integrate the acceleration to get the new velocity

@@ -1,3 +1,7 @@
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include "RaceManager.h"
 #include "Vehicle.h"
 #include <GLFW/glfw3.h>
@@ -232,7 +236,7 @@ int main()
 	//Set the current window as context for OpenGL
 	glfwMakeContextCurrent(window);
 	//Allow cursor but keep it disabled
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	//On Window Resize, callback to update viewport
 	glfwSetFramebufferSizeCallback(window, Framebuffer_size_callback);
@@ -348,6 +352,14 @@ int main()
 	double engineForce = mod.CalculateEngineForce(1200, mod.torqueCurve);
 	mod.SetAcceleration(engineForce);
 
+	//ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -369,7 +381,12 @@ int main()
 		//Render Call
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			
+		
+		//Let Imgui know that its a new frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		//Activate Shader
 		ourShader.Activate();
 		ourShader.setVec3("viewPos", camera.Position); //Update view position with the current camera position
@@ -433,6 +450,20 @@ int main()
 		}
 #pragma endregion Light Cube draw
 
+		//Imgui Window
+		ImGui::Begin("Window, ImGui Window");
+		ImGui::Text("Hello there adventurer");
+		ImGui::Checkbox("Accelerate", &ButtonPress);
+		ImGui::Text("Accelerate:  %.2f", mod.GetAcceleration());
+		if (rm.getElapsedTime() != 0) 
+		{
+			ImGui::Text("Race time:  %.2f", rm.getElapsedTime());
+		}
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		//RaceManager
 		rm.update(deltaTime);	
 		rm.getElapsedTime();
@@ -447,6 +478,10 @@ int main()
 	ourShader.Delete();
 	lightShader.Delete();
 	colorShader.Delete();
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	//Terminate call to clean up all resources
 	glfwTerminate();
@@ -496,7 +531,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	//camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
