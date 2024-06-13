@@ -79,7 +79,7 @@ class Camera
 		void FollowModel(glm::vec3& modPos, float dt);
 
 	private:
-		float lerpTime = 7.0f;
+		float lerpTime = 7.5f;
 		void updateCameraVectors();
 
 		glm::vec3 lerp(const glm::vec3& start, const glm::vec3& end, float dt) {

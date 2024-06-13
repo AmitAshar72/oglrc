@@ -8,6 +8,11 @@ void Vehicle::Draw(Shader& shader, Camera& cam)
 
 void Vehicle::HandleVehicleInputs(GLFWwindow* window, float deltaTime)
 {
+    if (!AllowInputs) 
+    {
+        return;
+    }
+
     // Handle input
     bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
     bool backward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
@@ -16,6 +21,13 @@ void Vehicle::HandleVehicleInputs(GLFWwindow* window, float deltaTime)
     bool brake = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
     UpdateVehicleMovement(forward, backward, left, right, brake, deltaTime);
+}
+
+void Vehicle::ResetStats()
+{
+    Speed = 0.0f;
+    Orientation = 0.0f;
+    AllowInputs = false;
 }
 
 void Vehicle::UpdateVehicleMovement(bool forward, bool backward, bool left, bool right, bool brake, float deltaTime)
@@ -67,6 +79,8 @@ void Vehicle::UpdateVehicleMovement(bool forward, bool backward, bool left, bool
 
     ModelPosition.x += Speed * std::sin(glm::radians(Orientation)) * deltaTime;
     ModelPosition.z += Speed * std::cos(glm::radians(Orientation)) * deltaTime;
+
+    //std::cout << "POS: (" << ModelPosition.x << ", " << ModelPosition.y << ", " << ModelPosition.z << ")" << std::endl;
 }
 
 double Vehicle::CalculateRPM(double throttle) {

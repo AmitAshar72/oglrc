@@ -7,6 +7,12 @@
 #include <GLFW/glfw3.h>
 
 
+#include <chrono>
+#include <thread>
+#include <BPSRC/btBulletDynamicsCommon.h>
+
+
+
 void InitWindow(); // Initial GLFW
 int InitGlad(); //Initialize Glad. Glad manages function pointers for OpenGL
 void Framebuffer_size_callback(GLFWwindow* window, int width, int height); //Callback function for when we resize the window
@@ -16,6 +22,7 @@ void ProcessInput(GLFWwindow* window);
 void SetupLights(Shader& shader, Camera& camera); //Light parameters are set here
 void EnableOutline(Model& mod, Shader& modShader, Shader& outlineShader, glm::mat4& projection, glm::mat4& view, glm::mat4& model);
 bool IsCursorOnModel(double xPos, double yPos, const glm::vec3& modPos, float tolerance);
+void StartRace(GLFWwindow* window, Vehicle& mod, RaceManager& rm);
 
 //Screen dimensions
 const unsigned int SCR_WIDTH = 1600;
@@ -82,6 +89,7 @@ static const std::string textureDirectory = "D:/Personal Project Repos/OpenGL Te
 //		20, 21, 22,
 //		22, 23, 20
 //};
+
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -211,7 +219,7 @@ glm::vec3 pointLightPositions[] = {
 	glm::vec3(-9.95f,  2.1f, 95.0f)
 };
 
-glm::vec3 Pos = glm::vec3(0.0f, 0.010f, 105.0f);
+glm::vec3 ModPos = glm::vec3(0.0f, 0.010f, 105.0f);
 glm::vec3 CurrentVelocity = glm::vec3(0.0f);
 float acceleration = 5.0f;
 float deceleration = 2.5f;
@@ -219,8 +227,19 @@ float maxspeed = 60.0f;
 
 bool ButtonPress = false;
 
+
+bool RaceStarted = true;
+
+void functionA() {
+	RaceStarted = false;
+	std::this_thread::sleep_for(std::chrono::seconds(2)); // wait for 2 seconds
+	RaceStarted = true;
+}
+
 int main()
 {
+	std::thread first(functionA);
+
 	//Instantiate GLFW Window
 	InitWindow();
 
@@ -244,7 +263,7 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	//On scroll input, callback to update camera zoom (FOV)
 	glfwSetScrollCallback(window, scroll_callback);
-
+		
 	//Initialize GLAD
 	InitGlad();
 	
@@ -257,7 +276,7 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-
+		
 	camera.SetScreenDimensions(SCR_WIDTH, SCR_LENGTH);
 
 	//Initialize our default shaders
@@ -267,7 +286,7 @@ int main()
 
 
 	//Model loading
-	Vehicle mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/f1/Formula 1 mesh.obj", Pos, 1500, acceleration, deceleration, maxspeed);
+	Vehicle mod("D:/Personal Project Repos/OpenGL Test/OpenGLTest/OpenGLTest/Resources/Textures/f1/Formula 1 mesh.obj", ModPos, 1500, acceleration, deceleration, maxspeed);
 	glm::vec3 modScale = glm::vec3(0.0025f);
 	glm::vec3 modRotation = glm::vec3(0.0f, -90.0f, 0.0f);
 	mod.SetScale(modScale);
@@ -360,12 +379,21 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
+	first.join();
+	// using a lambda function to capture the object and its member function
+	/*glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		mod.keyCallback(window, key, scancode, action, mods);
+		});*/
+
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;		
+
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+			functionA();
 
 		//Input
 		ProcessInput(window);
@@ -452,12 +480,16 @@ int main()
 
 		//Imgui Window
 		ImGui::Begin("Window, ImGui Window");
-		ImGui::Text("Hello there adventurer");
+		//ImGui::Text("Hello there adventurer");
 		ImGui::Checkbox("Accelerate", &ButtonPress);
+		ImGui::Checkbox("RaceT", &RaceStarted);
+		ImGui::ShowMetricsWindow();
+		ImGui::Text("Start Race:  %.2f", rm.StartRace);
 		ImGui::Text("Accelerate:  %.2f", mod.GetAcceleration());
-		if (rm.getElapsedTime() != 0) 
+		
+		if (rm.GetElapsedTime() != 0) 
 		{
-			ImGui::Text("Race time:  %.2f", rm.getElapsedTime());
+			ImGui::Text("Race time:  %.2f", rm.GetElapsedTime());
 		}
 		ImGui::End();
 
@@ -465,8 +497,14 @@ int main()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		//RaceManager
-		rm.update(deltaTime);	
-		rm.getElapsedTime();
+		StartRace(window, mod, rm);
+
+		if (rm.StartRace) 
+		{
+			rm.Update(deltaTime);
+			rm.GetElapsedTime();
+		}
+
 		//check and call events and swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -541,17 +579,26 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
+void StartRace(GLFWwindow* window, Vehicle& mod, RaceManager& rm) 
+{
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) 
+	{
+		rm.ResetRace();
+		mod.ResetStats();
+		mod.ModelPosition = ModPos;
+		std::cout << "Acceleration: " << std::endl;
+		mod.AllowInputs = true;
+		rm.StartRace = true;
+	}
+}
+
+
 void ProcessInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	} 
-
-	if (!ButtonPress && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-	{
-		ButtonPress = true;
-	}
 
 	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);

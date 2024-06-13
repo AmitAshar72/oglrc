@@ -19,6 +19,18 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{b9dbcbe1-0bb6-4965-b4e4-54d380693636}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{ac681788-13f4-4968-9802-2808d502c101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{6c2e876c-7f19-4fe5-9c19-2c2ef45393b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BulletPhysics">
+      <UniqueIdentifier>{ab0861c1-142a-4e1b-b9b9-024a51ab57ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BulletPhysics">
+      <UniqueIdentifier>{dab7ccf7-8793-4507-a8ba-d4f6462c12a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -63,6 +75,39 @@
     <ClCompile Include="Vehicle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_tables.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\BPSRC\btBulletCollisionAll.cpp">
+      <Filter>Source Files\BulletPhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\BPSRC\btBulletDynamicsAll.cpp">
+      <Filter>Source Files\BulletPhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\include\BPSRC\btLinearMathAll.cpp">
+      <Filter>Source Files\BulletPhysics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -100,6 +145,39 @@
     </ClInclude>
     <ClInclude Include="Vehicle.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\imgui\imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\BPSRC\btBulletCollisionCommon.h">
+      <Filter>Header Files\BulletPhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\include\BPSRC\btBulletDynamicsCommon.h">
+      <Filter>Header Files\BulletPhysics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

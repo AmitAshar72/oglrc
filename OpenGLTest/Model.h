@@ -16,7 +16,6 @@ public:
     glm::vec3 ModelScale = glm::vec3(1.0f);
     glm::vec3 ModelRotation = glm::vec3(1.0f);
     glm::vec3 ModelPosition = glm::vec3(0.0f);
-    
     Model(std::string const& path, glm::vec3& initPos);
     virtual void Draw(Shader& shader, Camera& cam);
     

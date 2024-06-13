@@ -14,13 +14,15 @@ struct TorqueCurvePoint
 class Vehicle:public Model
 {
 public:
-    std::vector<TorqueCurvePoint> torqueCurve;
 
+    bool AllowInputs = true;
+
+    std::vector<TorqueCurvePoint> torqueCurve;
     Vehicle(std::string const& path, glm::vec3& initPos, float mass, float acceleration, float deceleration, float maxSpeed)
         : Model(path, initPos), Mass(mass), Acceleration(acceleration), Deceleration(deceleration), Max_speed(maxSpeed)
     {       
         Orientation = 0.0f;
-        Steer_magnitude = 5.0f;
+        Steer_magnitude = 15.0f;
         Max_angle = 45.0f;
         CurrentDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
@@ -35,6 +37,32 @@ public:
         };
 
     }   
+
+    
+    //static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods, Vehicle& v)
+    //{
+    //    if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    //    {
+    //        // Handle space key press event
+    //        ResetStats(v);
+    //    }
+    //}
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) 
+    {
+        if (key == GLFW_KEY_R && action == GLFW_PRESS) 
+        {
+            std::cout << "VEHICLE" << std::endl;
+        }
+    }
+
+    //static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods, void* data) {
+    //    Vehicle* v = static_cast<Vehicle*>(data);
+    //    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+    //        // Handle space key press event
+    //        ResetStats(*v);
+    //    }
+    //}
+
     void Draw(Shader& shader, Camera& cam) override;
     void HandleVehicleInputs(GLFWwindow* window, float deltaTime);
     double CalculateRPM(double throttle);    
@@ -61,6 +89,8 @@ public:
         // Reset the acceleration to zero
         //Acceleration = 0.0f;
     }
+    void ResetStats();
+
 
 private:
     
